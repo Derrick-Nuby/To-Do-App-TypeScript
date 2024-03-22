@@ -11,6 +11,11 @@ const createAccount = async (req: Request, res: Response): Promise<void> => {
   try {
     const body = req.body as Pick<IUser, "name" | "email" | "password">
 
+    // const existingUser = await User.findOne({ email });
+    // if (existingUser) {
+    //   return res.status(400).json({ message: 'Email already exists' });
+    // }
+
     const user: IUser = new User({
       name: body.name,
       email: body.email,

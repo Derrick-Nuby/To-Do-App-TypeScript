@@ -13,7 +13,7 @@ const todoSchema: Schema = new Schema(
       required: true,
     },
 
-    status: {
+    completed: {
       type: Boolean,
       default: false,
       required: true,

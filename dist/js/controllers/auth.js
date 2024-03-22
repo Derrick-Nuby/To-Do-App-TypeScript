@@ -21,6 +21,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
+        // const existingUser = await User.findOne({ email });
+        // if (existingUser) {
+        //   return res.status(400).json({ message: 'Email already exists' });
+        // }
         const user = new user_1.default({
             name: body.name,
             email: body.email,
