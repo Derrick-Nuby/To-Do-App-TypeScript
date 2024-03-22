@@ -44,10 +44,11 @@ const loginUser = async (req: Request, res: Response): Promise<any> => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
     }
+    const { id, name, email: userEmail } = user;
     
-    const token = jwt.sign({id: user.id, username: user.name, email: user.email}, 'jwtSecret', { expiresIn: '1h' })
+    const token = jwt.sign({ id, username: name, email: userEmail }, 'jwtSecret', { expiresIn: '1h' })
 
-    res.status(200).json({ message: "User logged in successfully", user, token });
+    res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
   } catch (error) {
     // Handle any errors
     console.error("Error logging in:", error);

@@ -21,19 +21,16 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
-        // const existingUser = await User.findOne({ email });
-        // if (existingUser) {
-        //   return res.status(400).json({ message: 'Email already exists' });
-        // }
         const user = new user_1.default({
             name: body.name,
             email: body.email,
             password: body.password,
         });
         const newUser = yield user.save();
+        const { name, email } = newUser;
         res
             .status(201)
-            .json({ message: "User Created Successfuly", user: newUser });
+            .json({ message: "User Created Successfuly", user: { name, email } });
     }
     catch (error) {
         throw error;
@@ -51,8 +48,9 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid password" });
         }
-        const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.name, email: user.email }, 'jwtSecret', { expiresIn: '1h' });
-        res.status(200).json({ message: "User logged in successfully", user, token });
+        const { id, name, email: userEmail } = user;
+        const token = jsonwebtoken_1.default.sign({ id, username: name, email: userEmail }, 'jwtSecret', { expiresIn: '1h' });
+        res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
     }
     catch (error) {
         // Handle any errors
