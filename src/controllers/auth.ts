@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import { Response, Request } from "express"
 import { IUser } from "../types/user"
 import User from "../models/user"
+import dotenv from 'dotenv';
+dotenv.config();
 
 import jwt from 'jsonwebtoken';
 
@@ -42,7 +44,7 @@ const loginUser = async (req: Request, res: Response): Promise<any> => {
       return res.status(401).json({ message: "Invalid password" });
     }
     
-    const token = jwt.sign({id: user.id, username: user.name, email: user.email}, 'secretString', { expiresIn: '1h' })
+    const token = jwt.sign({id: user.id, username: user.name, email: user.email}, 'jwtSecret', { expiresIn: '1h' })
 
     res.status(200).json({ message: "User logged in successfully", user, token });
   } catch (error) {

@@ -3,6 +3,8 @@ import mongoose from "mongoose"
 import cors from "cors"
 import todoRoutes from "./routes/todos"
 import userRoutes from "./routes/auth"
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app: Express = express()
 
@@ -13,8 +15,7 @@ app.use(express.json());
 app.use('/api/todos', todoRoutes)
 app.use('/api/user', userRoutes)
 
-
-const uri: string = `mongodb://localhost:27017/TS-To-Do-App`;
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/TS-To-Do-App';
 
 
 const options = { useNewUrlParser: true, useUnifiedTopology: true }

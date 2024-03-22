@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginUser = exports.createAccount = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const user_1 = __importDefault(require("../models/user"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -45,7 +47,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid password" });
         }
-        const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.name, email: user.email }, 'secretString', { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.name, email: user.email }, 'jwtSecret', { expiresIn: '1h' });
         res.status(200).json({ message: "User logged in successfully", user, token });
     }
     catch (error) {
