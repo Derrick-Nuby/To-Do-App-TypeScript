@@ -11,11 +11,6 @@ const createAccount = async (req: Request, res: Response): Promise<void> => {
   try {
     const body = req.body as Pick<IUser, "name" | "email" | "password">
 
-    // const existingUser = await User.findOne({ email });
-    // if (existingUser) {
-    //   return res.status(400).json({ message: 'Email already exists' });
-    // }
-
     const user: IUser = new User({
       name: body.name,
       email: body.email,
@@ -24,10 +19,11 @@ const createAccount = async (req: Request, res: Response): Promise<void> => {
 
     const newUser: IUser = await user.save()
 
+    const { name, email } = newUser;
     
     res
       .status(201)
-      .json({ message: "User Created Successfuly", user: newUser})
+      .json({ message: "User Created Successfuly", user: { name, email } })
   } catch (error) {
     throw error
   }
