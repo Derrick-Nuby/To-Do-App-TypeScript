@@ -20,14 +20,17 @@ dotenv_1.default.config();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const body = req.body;
+        const { name, email, password } = req.body;
+        const existingUser = yield user_1.default.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "A user with that email already exists, if that is you.. please login or reset your password" });
+        }
         const user = new user_1.default({
-            name: body.name,
-            email: body.email,
-            password: body.password,
+            name,
+            email,
+            password,
         });
         const newUser = yield user.save();
-        const { name, email } = newUser;
         res
             .status(201)
             .json({ message: "User Created Successfuly", user: { name, email } });

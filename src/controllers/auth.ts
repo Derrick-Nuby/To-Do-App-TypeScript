@@ -7,19 +7,22 @@ dotenv.config();
 
 import jwt from 'jsonwebtoken';
 
-const createAccount = async (req: Request, res: Response): Promise<void> => {
+const createAccount = async (req: Request, res: Response): Promise<any> => {
   try {
-    const body = req.body as Pick<IUser, "name" | "email" | "password">
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "A user with that email already exists, if that is you.. please login or reset your password" });
+    }
 
     const user: IUser = new User({
-      name: body.name,
-      email: body.email,
-      password: body.password,
+      name,
+      email,
+      password,
     })
 
     const newUser: IUser = await user.save()
-
-    const { name, email } = newUser;
     
     res
       .status(201)
