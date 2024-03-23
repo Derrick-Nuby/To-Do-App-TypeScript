@@ -49,9 +49,18 @@ const loginUser = async (req: Request, res: Response): Promise<any> => {
     }
     const { id, name, email: userEmail } = user;
     
-    const token = jwt.sign({ id, username: name, email: userEmail }, 'jwtSecret', { expiresIn: '1h' })
+    const token = jwt.sign({ id, username: name, email: userEmail }, 'jwtSecret')
 
-    res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
+    const expiryDate = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+
+    res.cookie(
+      'jwt',
+      token,
+      {httpOnly: true, path: '/', expires: expiryDate},
+      
+      ),
+    
+      res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
   } catch (error) {
     // Handle any errors
     console.error("Error logging in:", error);

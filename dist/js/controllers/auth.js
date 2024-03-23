@@ -52,8 +52,10 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(401).json({ message: "Invalid password" });
         }
         const { id, name, email: userEmail } = user;
-        const token = jsonwebtoken_1.default.sign({ id, username: name, email: userEmail }, 'jwtSecret', { expiresIn: '1h' });
-        res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
+        const token = jsonwebtoken_1.default.sign({ id, username: name, email: userEmail }, 'jwtSecret');
+        const expiryDate = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+        res.cookie('jwt', token, { httpOnly: true, path: '/', expires: expiryDate }),
+            res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
     }
     catch (error) {
         // Handle any errors

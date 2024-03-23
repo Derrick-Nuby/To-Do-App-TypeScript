@@ -15,6 +15,8 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
 const addTodo = async (req: Request, res: Response): Promise<void> => {
     try {
       const body = req.body as Pick<ITodo, "name" | "description" | "completed">
+
+      const userId = req.userId;
   
       const todo: ITodo = new Todo({
         name: body.name,
@@ -26,7 +28,7 @@ const addTodo = async (req: Request, res: Response): Promise<void> => {
   
       res
         .status(201)
-        .json({ message: "Todo added", todo: newTodo})
+        .json({ message: "Todo added", userId, todo: newTodo})
     } catch (error) {
       throw error
     }

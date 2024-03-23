@@ -27,6 +27,7 @@ exports.getTodos = getTodos;
 const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
+        const userId = req.userId;
         const todo = new todo_1.default({
             name: body.name,
             description: body.description,
@@ -35,7 +36,7 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const newTodo = yield todo.save();
         res
             .status(201)
-            .json({ message: "Todo added", todo: newTodo });
+            .json({ message: "Todo added", userId, todo: newTodo });
     }
     catch (error) {
         throw error;

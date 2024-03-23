@@ -9,13 +9,17 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const jwtSecret = process.env.JWT_SECRET || 'defaultSecret';
 const authJWT = (req, res, next) => {
-    var _a;
-    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+    const token = req.cookies.jwt;
     if (token) {
-        jsonwebtoken_1.default.verify(token, 'jwtSecret', (err) => {
+        jsonwebtoken_1.default.verify(token, 'jwtSecret', (err, decoded) => {
             if (err) {
                 return res.status(403).json({ message: 'Failed to authenticate token' });
             }
+            const { id, username, email } = decoded;
+            console.log('User ID:', id);
+            console.log('Username:', username);
+            console.log('Email:', email);
+            req.userId = id;
             next();
         });
     }
