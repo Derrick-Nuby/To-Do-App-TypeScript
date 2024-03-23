@@ -6,11 +6,11 @@ const userSchema = Joi.object({
   Joi.string()
     .required()
     .min(4)
-    .pattern(new RegExp('^[a-zA-Z0-9]+$'))
+    .pattern(new RegExp('^[a-zA-Z0-9 ]+$'))
     .messages({
         'string.empty': 'Name is required',
         'string.min': 'Name must be at least {#limit} characters long',
-        'string.pattern.base': 'Name must contain only alphanumeric characters',
+        'string.pattern.base': 'Name must contain only alphanumeric characters Or a space',
   }),
   email: Joi.string()
     .email()
