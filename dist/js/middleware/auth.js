@@ -16,9 +16,6 @@ const authJWT = (req, res, next) => {
                 return res.status(403).json({ message: 'Failed to authenticate token' });
             }
             const { id, username, email } = decoded;
-            console.log('User ID:', id);
-            console.log('Username:', username);
-            console.log('Email:', email);
             req.userId = id;
             next();
         });
