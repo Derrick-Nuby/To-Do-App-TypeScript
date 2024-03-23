@@ -70,7 +70,13 @@ const todoSchema = Joi.object({
     }),
     completed: Joi.boolean()
     .invalid(true)
-    .default(false)
+    .default(false),
+
+    // createdBy: Joi.string()
+    // .required()
+    // .messages({
+    //     'string.empty': 'Created by is required mean no token',
+    // }),
 });
 
 const todoUpdateSchema = Joi.object({

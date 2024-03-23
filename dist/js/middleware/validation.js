@@ -76,7 +76,12 @@ const todoSchema = joi_1.default.object({
     }),
     completed: joi_1.default.boolean()
         .invalid(true)
-        .default(false)
+        .default(false),
+    // createdBy: Joi.string()
+    // .required()
+    // .messages({
+    //     'string.empty': 'Created by is required mean no token',
+    // }),
 });
 const todoUpdateSchema = joi_1.default.object({
     name: joi_1.default.string()

@@ -1,5 +1,5 @@
 import { ITodo } from "./../types/todo"
-import { model, Schema } from "mongoose"
+import { model, Schema, Types } from "mongoose"
 
 const todoSchema: Schema = new Schema(
   {
@@ -14,6 +14,11 @@ const todoSchema: Schema = new Schema(
     completed: {
       type: Boolean,
       default: false,
+    },
+    createdBy: {
+      type: Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
   },
   { timestamps: true }

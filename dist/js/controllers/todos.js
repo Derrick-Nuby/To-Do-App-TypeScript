@@ -16,7 +16,8 @@ exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodos = v
 const todo_1 = __importDefault(require("../models/todo"));
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const todos = yield todo_1.default.find();
+        const userId = req.userId;
+        const todos = yield todo_1.default.find({ createdBy: userId });
         res.status(200).json({ todos });
     }
     catch (error) {
@@ -32,11 +33,12 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             name: body.name,
             description: body.description,
             completed: body.completed,
+            createdBy: userId,
         });
         const newTodo = yield todo.save();
         res
             .status(201)
-            .json({ message: "Todo added", userId, todo: newTodo });
+            .json({ message: "Todo added", todo: newTodo });
     }
     catch (error) {
         throw error;
@@ -45,28 +47,42 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.addTodo = addTodo;
 const updateTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { params: { id }, body, } = req;
-        const updateTodo = yield todo_1.default.findByIdAndUpdate({ _id: id }, body, { new: true });
+        const userId = req.userId;
+        const todoId = req.params.id;
+        const updateFields = req.body;
+        const updatedTodo = yield todo_1.default.findOneAndUpdate({ _id: todoId, createdBy: userId }, updateFields, { new: true });
+        if (!updatedTodo) {
+            res.status(404).json({ message: "Todo not found or user does not have permission to update" });
+            return;
+        }
         res.status(200).json({
             message: "Todo updated",
-            todo: updateTodo,
+            todo: updatedTodo,
         });
     }
     catch (error) {
-        throw error;
+        console.error("Error updating todo:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.updateTodo = updateTodo;
 const deleteTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const deletedTodo = yield todo_1.default.findOneAndDelete({ _id: req.params.id });
+        const userId = req.userId;
+        const todoId = req.params.id;
+        const deletedTodo = yield todo_1.default.findOneAndDelete({ _id: todoId, createdBy: userId });
+        if (!deletedTodo) {
+            res.status(404).json({ message: "Todo not found or user does not have permission to delete this todo" });
+            return;
+        }
         res.status(200).json({
             message: "Todo deleted",
             todo: deletedTodo,
         });
     }
     catch (error) {
-        throw error;
+        console.error("Error deleting todo:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.deleteTodo = deleteTodo;

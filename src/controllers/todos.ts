@@ -5,7 +5,8 @@ import Todo from "../models/todo"
 
 const getTodos = async (req: Request, res: Response): Promise<void> => {
   try {
-    const todos: ITodo[] = await Todo.find()
+    const userId = req.userId;
+    const todos: ITodo[] = await Todo.find({ createdBy: userId });
     res.status(200).json({ todos })
   } catch (error) {
     throw error
@@ -22,50 +23,67 @@ const addTodo = async (req: Request, res: Response): Promise<void> => {
         name: body.name,
         description: body.description,
         completed: body.completed,
+        createdBy: userId,
       })
   
       const newTodo: ITodo = await todo.save()
   
       res
         .status(201)
-        .json({ message: "Todo added", userId, todo: newTodo})
+        .json({ message: "Todo added", todo: newTodo})
     } catch (error) {
       throw error
     }
 }
 
 const updateTodo = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const {
-        params: { id },
-        body,
-      } = req
-      const updateTodo: ITodo | null = await Todo.findByIdAndUpdate(
-        { _id: id },
-        body,
-        {new: true}
-      )
+  try {
+      const userId = req.userId;
+      const todoId = req.params.id;
+      const updateFields = req.body;
+
+      const updatedTodo: ITodo | null = await Todo.findOneAndUpdate(
+          { _id: todoId, createdBy: userId },
+          updateFields,
+          { new: true }
+      );
+
+      if (!updatedTodo) {
+          res.status(404).json({ message: "Todo not found or user does not have permission to update" });
+          return;
+      }
+
       res.status(200).json({
-        message: "Todo updated",
-        todo: updateTodo,
-      })
-    } catch (error) {
-      throw error
-    }
-}
+          message: "Todo updated",
+          todo: updatedTodo,
+      });
+  } catch (error) {
+      console.error("Error updating todo:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const deleteTodo = async (req: Request, res: Response): Promise<void> => {
     try {
-      const deletedTodo: ITodo | null = await Todo.findOneAndDelete(
-        { _id: req.params.id }
-        )
-      res.status(200).json({
-        message: "Todo deleted",
-        todo: deletedTodo,
-      })
+
+      const userId = req.userId;
+      const todoId = req.params.id;
+
+      const deletedTodo: ITodo | null = await Todo.findOneAndDelete({ _id: todoId, createdBy: userId });
+
+        if (!deletedTodo) {
+            res.status(404).json({ message: "Todo not found or user does not have permission to delete this todo" });
+            return;
+        }
+
+        res.status(200).json({
+            message: "Todo deleted",
+            todo: deletedTodo,
+        });
     } catch (error) {
-      throw error
+        console.error("Error deleting todo:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-}
+};
   
   export { getTodos, addTodo, updateTodo, deleteTodo }
