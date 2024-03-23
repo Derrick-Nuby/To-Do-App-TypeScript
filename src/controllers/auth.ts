@@ -60,7 +60,7 @@ const loginUser = async (req: Request, res: Response): Promise<any> => {
       
       ),
     
-      res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail }, token });
+      res.status(200).json({ message: "User logged in successfully", user: { id, username: name, email: userEmail } });
   } catch (error) {
     // Handle any errors
     console.error("Error logging in:", error);
