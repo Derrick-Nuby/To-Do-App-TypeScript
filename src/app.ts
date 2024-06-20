@@ -6,6 +6,7 @@ import todoRoutes from "./routes/todos"
 import userRoutes from "./routes/auth"
 import dotenv from 'dotenv';
 dotenv.config();
+import { swaggerSetup } from './swagger';
 
 const app: Express = express()
 
@@ -16,6 +17,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use('/api/todos', todoRoutes)
 app.use('/api/user', userRoutes)
+swaggerSetup(app);
 
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/TS-To-Do-App';
 
