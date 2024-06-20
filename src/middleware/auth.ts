@@ -37,14 +37,14 @@ const authJWT = (req: Request, res: Response, next: NextFunction) => {
   if (token) {
     jwt.verify(token, 'jwtSecret', (err: any, decoded: any) => {
       if (err) {
-        return res.status(403).json({ message: 'Failed to authenticate token' });
+        return res.status(403).json({ error: 'Failed to authenticate token' });
       }
       const { id, username, email } = decoded;
       req.userId = id;
       next();
     });
   } else {
-    res.status(401).json({ message: 'No token provided' });
+    res.status(401).json({ error: 'No token provided' });
   }
 };
 
