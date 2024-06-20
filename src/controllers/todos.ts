@@ -114,5 +114,32 @@ const deleteTodo = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+const statusTodo = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const userId = req.userId;
+      const todoId = req.params.id;
+      const completed = req.body;
+
+      const updatedTodo: ITodo | null = await Todo.findOneAndUpdate(
+          { _id: todoId, createdBy: userId },
+          completed,
+          { new: true }
+      );
+
+      if (!updatedTodo) {
+          res.status(404).json({ message: "Todo not found or user does not have permission to update" });
+          return;
+      }
+
+      res.status(200).json({
+          message: "Todo status updated",
+          todo: updatedTodo,
+      });
+  } catch (error) {
+      console.error("Error marking to do as done or undone:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+};
   
-  export { getTodos, addTodo, updateTodo, deleteTodo }
+export { getTodos, addTodo, updateTodo, deleteTodo, statusTodo }
